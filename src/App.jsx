@@ -1,7 +1,23 @@
+import { useEffect, useState } from "react";
+
 function App() {
+
+  const [disciplinas, setDisciplinas] = useState([]);
+
+  useEffect(() => {
+
+    fetch("https://m80ggktfb6.execute-api.us-east-1.amazonaws.com/disciplinas")
+      .then((response) => response.json())
+      .then((data) => {
+        setDisciplinas(data);
+      });
+
+  }, []);
+
   return (
     <div className="min-h-screen bg-slate-950 text-white">
 
+      {/* Navbar */}
       <nav className="flex items-center justify-between px-8 py-5 border-b border-slate-800">
 
         <h1 className="text-3xl font-bold text-emerald-400">
@@ -14,6 +30,7 @@ function App() {
 
       </nav>
 
+      {/* Hero */}
       <section className="text-center py-24 px-6">
 
         <h2 className="text-6xl font-bold leading-tight max-w-4xl mx-auto">
@@ -25,66 +42,38 @@ function App() {
           Plataforma acadêmica para monitorias acadêmicas da UFERSA.
         </p>
 
-        <button className="mt-10 bg-emerald-500 hover:bg-emerald-600 px-8 py-4 rounded-2xl text-lg font-semibold">
-          Agendar agora
-        </button>
-
       </section>
 
+      {/* Cards */}
       <section className="grid md:grid-cols-3 gap-8 px-8 pb-20">
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+        {disciplinas.map((disciplina, index) => (
 
-          <h3 className="text-2xl font-bold mb-3">
-            Sistemas Distribuídos
-          </h3>
+          <div
+            key={index}
+            className="bg-slate-900 border border-slate-800 rounded-3xl p-8"
+          >
 
-          <p className="text-slate-400 mb-6">
-            Monitor: Carlos Silva
-          </p>
+            <h3 className="text-2xl font-bold mb-3">
+              {disciplina.nome}
+            </h3>
 
-          <button className="bg-emerald-500 hover:bg-emerald-600 px-5 py-3 rounded-xl">
-            Agendar
-          </button>
+            <p className="text-slate-400 mb-6">
+              Monitor: {disciplina.monitor}
+            </p>
 
-        </div>
+            <button className="bg-emerald-500 hover:bg-emerald-600 px-5 py-3 rounded-xl">
+              Agendar
+            </button>
 
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
+          </div>
 
-          <h3 className="text-2xl font-bold mb-3">
-            Banco de Dados
-          </h3>
-
-          <p className="text-slate-400 mb-6">
-            Monitor: Ana Costa
-          </p>
-
-          <button className="bg-emerald-500 hover:bg-emerald-600 px-5 py-3 rounded-xl">
-            Agendar
-          </button>
-
-        </div>
-
-        <div className="bg-slate-900 border border-slate-800 rounded-3xl p-8">
-
-          <h3 className="text-2xl font-bold mb-3">
-            Algoritmos
-          </h3>
-
-          <p className="text-slate-400 mb-6">
-            Monitor: João Lima
-          </p>
-
-          <button className="bg-emerald-500 hover:bg-emerald-600 px-5 py-3 rounded-xl">
-            Agendar
-          </button>
-
-        </div>
+        ))}
 
       </section>
 
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
