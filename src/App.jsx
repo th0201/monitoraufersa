@@ -1,78 +1,170 @@
-import { useEffect, useState } from "react";
-
 function App() {
 
-  const [disciplinas, setDisciplinas] = useState([]);
+  const login = () => {
 
-  useEffect(() => {
+    const clientId = "1qh0531bvr9ckua0l8tmg0jro9";
 
-    fetch("https://m80ggktfb6.execute-api.us-east-1.amazonaws.com/disciplinas")
-      .then((response) => response.json())
-      .then((data) => {
-        setDisciplinas(data);
-      });
+    const redirectUri = "http://localhost:5173";
 
-  }, []);
+    const cognitoDomain =
+      "https://us-east-12suyavxth.auth.us-east-1.amazoncognito.com";
+
+    window.location.href =
+      `${cognitoDomain}/login?client_id=${clientId}` +
+      `&response_type=token` +
+      `&scope=email+openid` +
+      `&redirect_uri=${redirectUri}`;
+  };
+
+  const disciplinas = [
+    {
+      nome: "Sistemas Distribuídos",
+      monitor: "Carlos Silva",
+      horario: "Segunda • 14h"
+    },
+    {
+      nome: "Banco de Dados",
+      monitor: "Ana Costa",
+      horario: "Terça • 10h"
+    },
+    {
+      nome: "Algoritmos",
+      monitor: "João Lima",
+      horario: "Quarta • 16h"
+    }
+  ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white">
 
-      {/* Navbar */}
-      <nav className="flex items-center justify-between px-8 py-5 border-b border-slate-800">
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(to bottom, #020617, #0f172a)",
+      color: "white",
+      fontFamily: "Arial",
+      padding: "30px"
+    }}>
 
-        <h1 className="text-3xl font-bold text-emerald-400">
-          MonitoraUFERSA
-        </h1>
+      <div style={{
+        maxWidth: "1100px",
+        margin: "0 auto"
+      }}>
 
-        <button className="bg-emerald-500 hover:bg-emerald-600 px-5 py-2 rounded-xl font-semibold">
-          Login
-        </button>
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          marginBottom: "40px",
+          flexWrap: "wrap",
+          gap: "20px"
+        }}>
 
-      </nav>
+          <div>
+            <h1 style={{
+              fontSize: "42px",
+              color: "#34d399",
+              marginBottom: "10px"
+            }}>
+              MonitoraUFERSA
+            </h1>
 
-      {/* Hero */}
-      <section className="text-center py-24 px-6">
-
-        <h2 className="text-6xl font-bold leading-tight max-w-4xl mx-auto">
-          Agende suas monitorias
-          <span className="text-emerald-400"> facilmente</span>
-        </h2>
-
-        <p className="text-slate-400 text-xl mt-8 max-w-2xl mx-auto">
-          Plataforma acadêmica para monitorias acadêmicas da UFERSA.
-        </p>
-
-      </section>
-
-      {/* Cards */}
-      <section className="grid md:grid-cols-3 gap-8 px-8 pb-20">
-
-        {disciplinas.map((disciplina, index) => (
-
-          <div
-            key={index}
-            className="bg-slate-900 border border-slate-800 rounded-3xl p-8"
-          >
-
-            <h3 className="text-2xl font-bold mb-3">
-              {disciplina.nome}
-            </h3>
-
-            <p className="text-slate-400 mb-6">
-              Monitor: {disciplina.monitor}
+            <p style={{
+              color: "#cbd5e1",
+              fontSize: "18px"
+            }}>
+              Sistema de agendamento de monitorias
             </p>
-
-            <button className="bg-emerald-500 hover:bg-emerald-600 px-5 py-3 rounded-xl">
-              Agendar
-            </button>
-
           </div>
 
-        ))}
+          <button
+            onClick={login}
+            style={{
+              backgroundColor: "#10b981",
+              border: "none",
+              padding: "14px 22px",
+              borderRadius: "12px",
+              color: "white",
+              fontWeight: "bold",
+              cursor: "pointer",
+              fontSize: "16px"
+            }}
+          >
+            Entrar com Cognito
+          </button>
 
-      </section>
+        </div>
+
+        <h2 style={{
+          marginBottom: "25px",
+          fontSize: "28px"
+        }}>
+          Monitorias disponíveis
+        </h2>
+
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "25px"
+        }}>
+
+          {disciplinas.map((disciplina, index) => (
+
+            <div
+              key={index}
+              style={{
+                backgroundColor: "#111827",
+                padding: "25px",
+                borderRadius: "20px",
+                border: "1px solid #1e293b"
+              }}
+            >
+
+              <h3 style={{
+                color: "#34d399",
+                marginBottom: "15px",
+                fontSize: "24px"
+              }}>
+                {disciplina.nome}
+              </h3>
+
+              <p style={{
+                marginBottom: "10px",
+                color: "#cbd5e1"
+              }}>
+                👨‍🏫 Monitor: {disciplina.monitor}
+              </p>
+
+              <p style={{
+                marginBottom: "20px",
+                color: "#cbd5e1"
+              }}>
+                🕒 {disciplina.horario}
+              </p>
+
+              <button
+                style={{
+                  width: "100%",
+                  backgroundColor: "#10b981",
+                  border: "none",
+                  padding: "12px",
+                  borderRadius: "10px",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer"
+                }}
+              >
+                Agendar Monitoria
+              </button>
+
+            </div>
+
+          ))}
+
+        </div>
+
+      </div>
 
     </div>
+
   );
 }
 
