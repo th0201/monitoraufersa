@@ -1,4 +1,8 @@
+import { useState } from "react";
+
 function App() {
+
+  const [mensagem, setMensagem] = useState("");
 
   const login = () => {
 
@@ -14,6 +18,12 @@ function App() {
       `&response_type=token` +
       `&scope=email+openid` +
       `&redirect_uri=${redirectUri}`;
+  };
+
+  const agendar = (disciplina) => {
+    setMensagem(
+      `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
+    );
   };
 
   const disciplinas = [
@@ -93,6 +103,21 @@ function App() {
 
         </div>
 
+        {mensagem && (
+          <div
+            style={{
+              backgroundColor: "#064e3b",
+              color: "#d1fae5",
+              padding: "15px",
+              borderRadius: "10px",
+              marginBottom: "25px",
+              fontWeight: "bold"
+            }}
+          >
+            ✅ {mensagem}
+          </div>
+        )}
+
         <h2 style={{
           marginBottom: "25px",
           fontSize: "28px"
@@ -141,6 +166,7 @@ function App() {
               </p>
 
               <button
+                onClick={() => agendar(disciplina)}
                 style={{
                   width: "100%",
                   backgroundColor: "#10b981",
