@@ -4,10 +4,14 @@ function App() {
 
   const [mensagem, setMensagem] = useState("");
   const [disciplinas, setDisciplinas] = useState([]);
+  const [logado, setLogado] = useState(false);
 
   const API_URL =
     "https://m80ggktfb6.execute-api.us-east-1.amazonaws.com/prod/disciplinas";
 
+  // =========================
+  // LOGIN COGNITO
+  // =========================
   const login = () => {
 
     const clientId = "1qh0531bvr9ckua0l8tmg0jro9";
@@ -25,36 +29,53 @@ function App() {
       `&redirect_uri=${redirectUri}`;
   };
 
+  // =========================
+  // CHECAR LOGIN (TOKEN)
+  // =========================
+  useEffect(() => {
+
+    const hash = window.location.hash;
+
+    if (hash.includes("id_token") || hash.includes("access_token")) {
+      setLogado(true);
+
+      // limpa URL bonita depois do login
+      window.history.replaceState(null, "", window.location.pathname);
+    }
+
+  }, []);
+
+  // =========================
+  // CARREGAR DADOS
+  // =========================
   const carregarDisciplinas = async () => {
 
     try {
 
       const resposta = await fetch(API_URL);
-
       const dados = await resposta.json();
 
       setDisciplinas(dados);
 
     } catch (erro) {
-
-      console.error("Erro ao carregar disciplinas:", erro);
-
+      console.error(erro);
     }
 
   };
 
   useEffect(() => {
+    if (logado) {
+      carregarDisciplinas();
+    }
+  }, [logado]);
 
-    carregarDisciplinas();
-
-  }, []);
-
+  // =========================
+  // AÇÕES
+  // =========================
   const agendar = (disciplina) => {
-
     setMensagem(
       `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
     );
-
   };
 
   const excluirDisciplina = async (id) => {
@@ -66,17 +87,62 @@ function App() {
       });
 
       setMensagem("Disciplina removida com sucesso!");
-
       carregarDisciplinas();
 
     } catch (erro) {
-
-      console.error("Erro ao excluir disciplina:", erro);
-
+      console.error(erro);
     }
-
   };
 
+  // =========================
+  // TELA DE LOGIN
+  // =========================
+  if (!logado) {
+
+    return (
+
+      <div
+        style={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "linear-gradient(to bottom, #020617, #0f172a)",
+          color: "white",
+          flexDirection: "column"
+        }}
+      >
+
+        <h1 style={{ fontSize: "42px", color: "#34d399" }}>
+          MonitoraUFERSA
+        </h1>
+
+        <p style={{ marginBottom: "20px", color: "#cbd5e1" }}>
+          Faça login para acessar o sistema
+        </p>
+
+        <button
+          onClick={login}
+          style={{
+            backgroundColor: "#10b981",
+            border: "none",
+            padding: "14px 22px",
+            borderRadius: "12px",
+            color: "white",
+            fontWeight: "bold",
+            cursor: "pointer"
+          }}
+        >
+          Entrar com Cognito
+        </button>
+
+      </div>
+    );
+  }
+
+  // =========================
+  // SISTEMA (APÓS LOGIN)
+  // =========================
   return (
 
     <div
@@ -89,158 +155,75 @@ function App() {
       }}
     >
 
-      <div
-        style={{
-          maxWidth: "1100px",
-          margin: "0 auto"
-        }}
-      >
+      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "40px",
-            flexWrap: "wrap",
-            gap: "20px"
-          }}
-        >
-
-          <div>
-
-            <h1
-              style={{
-                fontSize: "42px",
-                color: "#34d399",
-                marginBottom: "10px"
-              }}
-            >
-              MonitoraUFERSA
-            </h1>
-
-            <p
-              style={{
-                color: "#cbd5e1",
-                fontSize: "18px"
-              }}
-            >
-              Sistema de agendamento de monitorias
-            </p>
-
-          </div>
-
-          <button
-            onClick={login}
-            style={{
-              backgroundColor: "#10b981",
-              border: "none",
-              padding: "14px 22px",
-              borderRadius: "12px",
-              color: "white",
-              fontWeight: "bold",
-              cursor: "pointer",
-              fontSize: "16px"
-            }}
-          >
-            Entrar com Cognito
-          </button>
-
+        <div style={{ marginBottom: "30px" }}>
+          <h1 style={{ color: "#34d399" }}>MonitoraUFERSA</h1>
+          <p>Sistema de agendamento de monitorias</p>
         </div>
 
         {mensagem && (
-
           <div
             style={{
               backgroundColor: "#064e3b",
-              color: "#d1fae5",
-              padding: "15px",
-              borderRadius: "10px",
-              marginBottom: "25px",
-              fontWeight: "bold"
+              padding: "10px",
+              borderRadius: "8px",
+              marginBottom: "20px"
             }}
           >
-            ✅ {mensagem}
+            {mensagem}
           </div>
-
         )}
 
-        <h2
-          style={{
-            marginBottom: "25px",
-            fontSize: "28px"
-          }}
-        >
-          Monitorias disponíveis
-        </h2>
+        <h2>Monitorias disponíveis</h2>
 
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "25px"
+            gap: "20px"
           }}
         >
 
-          {disciplinas.map((disciplina) => (
+          {disciplinas.map((d) => (
 
             <div
-              key={disciplina.id}
+              key={d.id}
               style={{
                 backgroundColor: "#111827",
-                padding: "25px",
-                borderRadius: "20px",
-                border: "1px solid #1e293b"
+                padding: "20px",
+                borderRadius: "12px"
               }}
             >
 
-              <h3
-                style={{
-                  color: "#34d399",
-                  marginBottom: "15px",
-                  fontSize: "24px"
-                }}
-              >
-                {disciplina.nome}
-              </h3>
-
-              <p
-                style={{
-                  marginBottom: "20px",
-                  color: "#cbd5e1"
-                }}
-              >
-                👨‍🏫 Monitor: {disciplina.monitor}
-              </p>
+              <h3 style={{ color: "#34d399" }}>{d.nome}</h3>
+              <p>Monitor: {d.monitor}</p>
 
               <button
-                onClick={() => agendar(disciplina)}
+                onClick={() => agendar(d)}
                 style={{
                   width: "100%",
+                  marginTop: "10px",
                   backgroundColor: "#10b981",
                   border: "none",
-                  padding: "12px",
-                  borderRadius: "10px",
+                  padding: "10px",
                   color: "white",
-                  fontWeight: "bold",
-                  cursor: "pointer"
+                  borderRadius: "8px"
                 }}
               >
-                Agendar Monitoria
+                Agendar
               </button>
 
               <button
-                onClick={() => excluirDisciplina(disciplina.id)}
+                onClick={() => excluirDisciplina(d.id)}
                 style={{
                   width: "100%",
+                  marginTop: "10px",
                   backgroundColor: "#dc2626",
                   border: "none",
-                  padding: "12px",
-                  borderRadius: "10px",
+                  padding: "10px",
                   color: "white",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  marginTop: "10px"
+                  borderRadius: "8px"
                 }}
               >
                 Excluir
@@ -255,9 +238,7 @@ function App() {
       </div>
 
     </div>
-
   );
-
 }
 
 export default App;
