@@ -160,6 +160,7 @@ function App() {
           MonitoraUFERSA
         </h1>
 
+        {/* TEXTO ÚNICO COMO VOCÊ PEDIU */}
         <p style={{
           color: "#cbd5e1",
           marginTop: "10px",
@@ -167,7 +168,7 @@ function App() {
           fontSize: "18px",
           maxWidth: "500px"
         }}>
-          Sistema de Agendamento de Monitorias da UFERSA
+          Sistema de agendamento de monitorias da UFERSA
         </p>
 
         <button
@@ -203,7 +204,6 @@ function App() {
 
       <div style={{ maxWidth: "1100px", margin: "auto" }}>
 
-        {/* HEADER */}
         <h1 style={{
           fontSize: "48px",
           fontWeight: "800",
