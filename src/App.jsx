@@ -5,6 +5,8 @@ function App() {
   const [mensagem, setMensagem] = useState("");
   const [disciplinas, setDisciplinas] = useState([]);
 
+  console.log("DISCIPLINAS:", disciplinas);
+
   const API_URL =
     "https://api.thayna-jacome.grupo5.sd.ufersa.dev.br/disciplinas";
 
@@ -25,20 +27,31 @@ function App() {
   };
 
   const carregarDisciplinas = async () => {
+
     try {
 
       const resposta = await fetch(API_URL);
+
+      console.log("STATUS:", resposta.status);
+
       const dados = await resposta.json();
+
+      console.log("DADOS RECEBIDOS:", dados);
 
       setDisciplinas(dados);
 
     } catch (erro) {
-      console.error(erro);
+
+      console.error("ERRO:", erro);
+
     }
+
   };
 
   useEffect(() => {
+
     carregarDisciplinas();
+
   }, []);
 
   const agendar = (disciplina) => {
@@ -46,23 +59,29 @@ function App() {
     setMensagem(
       `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
     );
+
   };
 
   const excluirDisciplina = async (id) => {
 
     try {
 
-      await fetch(`${API_URL}/${id}`, {
+      const resposta = await fetch(`${API_URL}/${id}`, {
         method: "DELETE"
       });
+
+      console.log("DELETE:", resposta.status);
 
       setMensagem("Disciplina removida com sucesso!");
 
       carregarDisciplinas();
 
     } catch (erro) {
-      console.error(erro);
+
+      console.error("ERRO DELETE:", erro);
+
     }
+
   };
 
   return (
@@ -96,6 +115,7 @@ function App() {
         >
 
           <div>
+
             <h1
               style={{
                 fontSize: "42px",
@@ -103,7 +123,7 @@ function App() {
                 marginBottom: "10px"
               }}
             >
-              MonitoraUFERSA
+              MonitoraUFERSA v2
             </h1>
 
             <p
@@ -114,6 +134,7 @@ function App() {
             >
               Sistema de agendamento de monitorias
             </p>
+
           </div>
 
           <button
@@ -135,6 +156,7 @@ function App() {
         </div>
 
         {mensagem && (
+
           <div
             style={{
               backgroundColor: "#064e3b",
@@ -147,6 +169,7 @@ function App() {
           >
             ✅ {mensagem}
           </div>
+
         )}
 
         <h2
@@ -158,11 +181,16 @@ function App() {
           Monitorias disponíveis
         </h2>
 
+        <p style={{ color: "#94a3b8" }}>
+          Total de disciplinas: {disciplinas.length}
+        </p>
+
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "25px"
+            gap: "25px",
+            marginTop: "20px"
           }}
         >
 
@@ -190,7 +218,7 @@ function App() {
 
               <p
                 style={{
-                  marginBottom: "10px",
+                  marginBottom: "20px",
                   color: "#cbd5e1"
                 }}
               >
@@ -241,6 +269,7 @@ function App() {
     </div>
 
   );
+
 }
 
 export default App;
