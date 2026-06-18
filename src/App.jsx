@@ -6,6 +6,9 @@ function App() {
   const [disciplinas, setDisciplinas] = useState([]);
   const [logado, setLogado] = useState(false);
 
+  const [nome, setNome] = useState("");
+  const [monitor, setMonitor] = useState("");
+
   const API_URL =
     "https://m80ggktfb6.execute-api.us-east-1.amazonaws.com/prod/disciplinas";
 
@@ -30,7 +33,7 @@ function App() {
   };
 
   // =========================
-  // CHECAR LOGIN (TOKEN)
+  // VERIFICAR LOGIN
   // =========================
   useEffect(() => {
 
@@ -38,25 +41,20 @@ function App() {
 
     if (hash.includes("id_token") || hash.includes("access_token")) {
       setLogado(true);
-
-      // limpa URL bonita depois do login
       window.history.replaceState(null, "", window.location.pathname);
     }
 
   }, []);
 
   // =========================
-  // CARREGAR DADOS
+  // CARREGAR DISCIPLINAS
   // =========================
   const carregarDisciplinas = async () => {
 
     try {
-
       const resposta = await fetch(API_URL);
       const dados = await resposta.json();
-
       setDisciplinas(dados);
-
     } catch (erro) {
       console.error(erro);
     }
@@ -64,20 +62,21 @@ function App() {
   };
 
   useEffect(() => {
-    if (logado) {
-      carregarDisciplinas();
-    }
+    if (logado) carregarDisciplinas();
   }, [logado]);
 
   // =========================
-  // AÇÕES
+  // AGENDAR
   // =========================
   const agendar = (disciplina) => {
     setMensagem(
-      `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
+      `Monitoria de ${disciplina.nome} agendada com ${disciplina.monitor}`
     );
   };
 
+  // =========================
+  // EXCLUIR
+  // =========================
   const excluirDisciplina = async (id) => {
 
     try {
@@ -92,6 +91,41 @@ function App() {
     } catch (erro) {
       console.error(erro);
     }
+
+  };
+
+  // =========================
+  // ADICIONAR
+  // =========================
+  const adicionarDisciplina = async () => {
+
+    if (!nome || !monitor) {
+      setMensagem("Preencha todos os campos!");
+      return;
+    }
+
+    try {
+
+      await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          nome,
+          monitor
+        })
+      });
+
+      setNome("");
+      setMonitor("");
+      setMensagem("Disciplina adicionada com sucesso!");
+      carregarDisciplinas();
+
+    } catch (erro) {
+      console.error(erro);
+    }
+
   };
 
   // =========================
@@ -100,25 +134,34 @@ function App() {
   if (!logado) {
 
     return (
-
       <div
         style={{
           height: "100vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
+          flexDirection: "column",
           background: "linear-gradient(to bottom, #020617, #0f172a)",
-          color: "white",
-          flexDirection: "column"
+          color: "white"
         }}
       >
 
-        <h1 style={{ fontSize: "42px", color: "#34d399" }}>
+        <h1
+          style={{
+            fontSize: "64px",
+            fontWeight: "800",
+            background: "linear-gradient(90deg, #34d399, #10b981)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            textShadow: "0px 4px 20px rgba(16,185,129,0.4)",
+            letterSpacing: "2px"
+          }}
+        >
           MonitoraUFERSA
         </h1>
 
-        <p style={{ marginBottom: "20px", color: "#cbd5e1" }}>
-          Faça login para acessar o sistema
+        <p style={{ color: "#cbd5e1", marginBottom: "20px" }}>
+          Sistema de monitorias da UFERSA
         </p>
 
         <button
@@ -141,7 +184,7 @@ function App() {
   }
 
   // =========================
-  // SISTEMA (APÓS LOGIN)
+  // SISTEMA PRINCIPAL
   // =========================
   return (
 
@@ -157,11 +200,65 @@ function App() {
 
       <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
 
-        <div style={{ marginBottom: "30px" }}>
-          <h1 style={{ color: "#34d399" }}>MonitoraUFERSA</h1>
-          <p>Sistema de agendamento de monitorias</p>
+        {/* HEADER */}
+        <h1
+          style={{
+            fontSize: "48px",
+            fontWeight: "800",
+            background: "linear-gradient(90deg, #34d399, #10b981)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+            textShadow: "0px 3px 15px rgba(16,185,129,0.35)"
+          }}
+        >
+          MonitoraUFERSA
+        </h1>
+
+        {/* FORM ADICIONAR */}
+        <div
+          style={{
+            backgroundColor: "#111827",
+            padding: "20px",
+            borderRadius: "15px",
+            marginTop: "20px",
+            marginBottom: "30px"
+          }}
+        >
+
+          <h3 style={{ color: "#34d399" }}>Nova Disciplina</h3>
+
+          <input
+            placeholder="Nome da disciplina"
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          />
+
+          <input
+            placeholder="Monitor"
+            value={monitor}
+            onChange={(e) => setMonitor(e.target.value)}
+            style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
+          />
+
+          <button
+            onClick={adicionarDisciplina}
+            style={{
+              backgroundColor: "#2563eb",
+              color: "white",
+              border: "none",
+              padding: "10px",
+              borderRadius: "8px",
+              cursor: "pointer",
+              width: "100%"
+            }}
+          >
+            Adicionar Disciplina
+          </button>
+
         </div>
 
+        {/* MENSAGEM */}
         {mensagem && (
           <div
             style={{
@@ -175,8 +272,7 @@ function App() {
           </div>
         )}
 
-        <h2>Monitorias disponíveis</h2>
-
+        {/* LISTA */}
         <div
           style={{
             display: "grid",
