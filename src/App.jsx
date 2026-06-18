@@ -25,25 +25,25 @@ function App() {
       `&redirect_uri=${redirectUri}`;
   };
 
+  const carregarDisciplinas = async () => {
+
+    try {
+
+      const resposta = await fetch(API_URL);
+
+      const dados = await resposta.json();
+
+      setDisciplinas(dados);
+
+    } catch (erro) {
+
+      console.error("Erro ao carregar disciplinas:", erro);
+
+    }
+
+  };
+
   useEffect(() => {
-
-    const carregarDisciplinas = async () => {
-
-      try {
-
-        const resposta = await fetch(API_URL);
-
-        const dados = await resposta.json();
-
-        setDisciplinas(dados);
-
-      } catch (erro) {
-
-        console.error("Erro ao carregar disciplinas:", erro);
-
-      }
-
-    };
 
     carregarDisciplinas();
 
@@ -54,6 +54,26 @@ function App() {
     setMensagem(
       `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
     );
+
+  };
+
+  const excluirDisciplina = async (id) => {
+
+    try {
+
+      await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+      });
+
+      setMensagem("Disciplina removida com sucesso!");
+
+      carregarDisciplinas();
+
+    } catch (erro) {
+
+      console.error("Erro ao excluir disciplina:", erro);
+
+    }
 
   };
 
@@ -207,6 +227,23 @@ function App() {
                 }}
               >
                 Agendar Monitoria
+              </button>
+
+              <button
+                onClick={() => excluirDisciplina(disciplina.id)}
+                style={{
+                  width: "100%",
+                  backgroundColor: "#dc2626",
+                  border: "none",
+                  padding: "12px",
+                  borderRadius: "10px",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  marginTop: "10px"
+                }}
+              >
+                Excluir
               </button>
 
             </div>
