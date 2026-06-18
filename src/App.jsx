@@ -69,7 +69,7 @@ function App() {
   }, [logado]);
 
   // =========================
-  // AGENDAR (AGORA SALVA NA LISTA)
+  // AGENDAR
   // =========================
   const agendar = (disciplina) => {
     setAgendadas([...agendadas, disciplina]);
@@ -85,7 +85,6 @@ function App() {
   const excluirDisciplina = async (id) => {
 
     try {
-
       await fetch(`${API_URL}/${id}`, {
         method: "DELETE"
       });
@@ -146,7 +145,9 @@ function App() {
         alignItems: "center",
         flexDirection: "column",
         background: "linear-gradient(to bottom, #020617, #0f172a)",
-        color: "white"
+        color: "white",
+        textAlign: "center",
+        padding: "20px"
       }}>
 
         <h1 style={{
@@ -158,6 +159,16 @@ function App() {
         }}>
           MonitoraUFERSA
         </h1>
+
+        <p style={{
+          color: "#cbd5e1",
+          marginTop: "10px",
+          marginBottom: "25px",
+          fontSize: "18px",
+          maxWidth: "500px"
+        }}>
+          Sistema de Agendamento de Monitorias da UFERSA
+        </p>
 
         <button
           onClick={login}
@@ -179,7 +190,7 @@ function App() {
   }
 
   // =========================
-  // MAIN
+  // SISTEMA PRINCIPAL
   // =========================
   return (
 
@@ -220,13 +231,14 @@ function App() {
           {mostrarAgendadas ? "Voltar" : "Ver Monitorias Agendadas"}
         </button>
 
-        {/* LISTA AGENDADAS */}
+        {/* AGENDADAS */}
         {mostrarAgendadas && (
           <div style={{
-            backgroundColor: "rgba(0,0,0,0.3)",
+            backgroundColor: "rgba(255,255,255,0.05)",
             padding: "20px",
             borderRadius: "12px",
-            marginBottom: "20px"
+            marginBottom: "20px",
+            backdropFilter: "blur(10px)"
           }}>
             <h3>Monitorias Agendadas</h3>
 
@@ -242,10 +254,11 @@ function App() {
 
         {/* FORM */}
         <div style={{
-          backgroundColor: "#111827",
+          backgroundColor: "rgba(255,255,255,0.05)",
           padding: "20px",
           borderRadius: "15px",
-          marginBottom: "30px"
+          marginBottom: "30px",
+          backdropFilter: "blur(10px)"
         }}>
 
           <h3 style={{ color: "#34d399" }}>Nova Disciplina</h3>
@@ -284,7 +297,7 @@ function App() {
         {/* MENSAGEM */}
         {mensagem && (
           <div style={{
-            backgroundColor: "#064e3b",
+            backgroundColor: "rgba(0,0,0,0.3)",
             padding: "10px",
             borderRadius: "8px",
             marginBottom: "20px"
@@ -293,7 +306,7 @@ function App() {
           </div>
         )}
 
-        {/* LISTA DISCIPLINAS */}
+        {/* LISTA */}
         <div style={{
           display: "grid",
           gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
@@ -302,9 +315,10 @@ function App() {
 
           {disciplinas.map((d) => (
             <div key={d.id} style={{
-              backgroundColor: "#111827",
+              backgroundColor: "rgba(255,255,255,0.05)",
               padding: "20px",
-              borderRadius: "12px"
+              borderRadius: "12px",
+              backdropFilter: "blur(10px)"
             }}>
 
               <h3 style={{ color: "#34d399" }}>{d.nome}</h3>
