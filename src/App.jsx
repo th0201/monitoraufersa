@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 function App() {
 
   const [mensagem, setMensagem] = useState("");
+  const [disciplinas, setDisciplinas] = useState([]);
+
+  const API_URL =
+    "https://api.thayna-jacome.grupo5.sd.ufersa.dev.br/disciplinas";
 
   const login = () => {
 
@@ -20,67 +24,94 @@ function App() {
       `&redirect_uri=${redirectUri}`;
   };
 
+  const carregarDisciplinas = async () => {
+    try {
+
+      const resposta = await fetch(API_URL);
+      const dados = await resposta.json();
+
+      setDisciplinas(dados);
+
+    } catch (erro) {
+      console.error(erro);
+    }
+  };
+
+  useEffect(() => {
+    carregarDisciplinas();
+  }, []);
+
   const agendar = (disciplina) => {
+
     setMensagem(
       `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
     );
   };
 
-  const disciplinas = [
-    {
-      nome: "Sistemas Distribuídos",
-      monitor: "Carlos Silva",
-      horario: "Segunda • 14h"
-    },
-    {
-      nome: "Banco de Dados",
-      monitor: "Ana Costa",
-      horario: "Terça • 10h"
-    },
-    {
-      nome: "Algoritmos",
-      monitor: "João Lima",
-      horario: "Quarta • 16h"
+  const excluirDisciplina = async (id) => {
+
+    try {
+
+      await fetch(`${API_URL}/${id}`, {
+        method: "DELETE"
+      });
+
+      setMensagem("Disciplina removida com sucesso!");
+
+      carregarDisciplinas();
+
+    } catch (erro) {
+      console.error(erro);
     }
-  ];
+  };
 
   return (
 
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(to bottom, #020617, #0f172a)",
-      color: "white",
-      fontFamily: "Arial",
-      padding: "30px"
-    }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "linear-gradient(to bottom, #020617, #0f172a)",
+        color: "white",
+        fontFamily: "Arial",
+        padding: "30px"
+      }}
+    >
 
-      <div style={{
-        maxWidth: "1100px",
-        margin: "0 auto"
-      }}>
+      <div
+        style={{
+          maxWidth: "1100px",
+          margin: "0 auto"
+        }}
+      >
 
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "40px",
-          flexWrap: "wrap",
-          gap: "20px"
-        }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: "40px",
+            flexWrap: "wrap",
+            gap: "20px"
+          }}
+        >
 
           <div>
-            <h1 style={{
-              fontSize: "42px",
-              color: "#34d399",
-              marginBottom: "10px"
-            }}>
+            <h1
+              style={{
+                fontSize: "42px",
+                color: "#34d399",
+                marginBottom: "10px"
+              }}
+            >
               MonitoraUFERSA
             </h1>
 
-            <p style={{
-              color: "#cbd5e1",
-              fontSize: "18px"
-            }}>
+            <p
+              style={{
+                color: "#cbd5e1",
+                fontSize: "18px"
+              }}
+            >
               Sistema de agendamento de monitorias
             </p>
           </div>
@@ -118,23 +149,27 @@ function App() {
           </div>
         )}
 
-        <h2 style={{
-          marginBottom: "25px",
-          fontSize: "28px"
-        }}>
+        <h2
+          style={{
+            marginBottom: "25px",
+            fontSize: "28px"
+          }}
+        >
           Monitorias disponíveis
         </h2>
 
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-          gap: "25px"
-        }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+            gap: "25px"
+          }}
+        >
 
-          {disciplinas.map((disciplina, index) => (
+          {disciplinas.map((disciplina) => (
 
             <div
-              key={index}
+              key={disciplina.id}
               style={{
                 backgroundColor: "#111827",
                 padding: "25px",
@@ -143,26 +178,23 @@ function App() {
               }}
             >
 
-              <h3 style={{
-                color: "#34d399",
-                marginBottom: "15px",
-                fontSize: "24px"
-              }}>
+              <h3
+                style={{
+                  color: "#34d399",
+                  marginBottom: "15px",
+                  fontSize: "24px"
+                }}
+              >
                 {disciplina.nome}
               </h3>
 
-              <p style={{
-                marginBottom: "10px",
-                color: "#cbd5e1"
-              }}>
+              <p
+                style={{
+                  marginBottom: "10px",
+                  color: "#cbd5e1"
+                }}
+              >
                 👨‍🏫 Monitor: {disciplina.monitor}
-              </p>
-
-              <p style={{
-                marginBottom: "20px",
-                color: "#cbd5e1"
-              }}>
-                🕒 {disciplina.horario}
               </p>
 
               <button
@@ -179,6 +211,23 @@ function App() {
                 }}
               >
                 Agendar Monitoria
+              </button>
+
+              <button
+                onClick={() => excluirDisciplina(disciplina.id)}
+                style={{
+                  width: "100%",
+                  backgroundColor: "#dc2626",
+                  border: "none",
+                  padding: "12px",
+                  borderRadius: "10px",
+                  color: "white",
+                  fontWeight: "bold",
+                  cursor: "pointer",
+                  marginTop: "10px"
+                }}
+              >
+                Excluir
               </button>
 
             </div>
