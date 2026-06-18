@@ -5,16 +5,15 @@ function App() {
   const [mensagem, setMensagem] = useState("");
   const [disciplinas, setDisciplinas] = useState([]);
 
-  console.log("DISCIPLINAS:", disciplinas);
-
   const API_URL =
-    "https://api.thayna-jacome.grupo5.sd.ufersa.dev.br/disciplinas";
+    "https://m80ggktfb6.execute-api.us-east-1.amazonaws.com/prod/disciplinas";
 
   const login = () => {
 
     const clientId = "1qh0531bvr9ckua0l8tmg0jro9";
 
-    const redirectUri = "http://localhost:5173";
+    const redirectUri =
+      "https://www.thayna-jacome.grupo5.sd.ufersa.dev.br";
 
     const cognitoDomain =
       "https://us-east-12suyavxth.auth.us-east-1.amazoncognito.com";
@@ -26,29 +25,25 @@ function App() {
       `&redirect_uri=${redirectUri}`;
   };
 
-  const carregarDisciplinas = async () => {
-
-    try {
-
-      const resposta = await fetch(API_URL);
-
-      console.log("STATUS:", resposta.status);
-
-      const dados = await resposta.json();
-
-      console.log("DADOS RECEBIDOS:", dados);
-
-      setDisciplinas(dados);
-
-    } catch (erro) {
-
-      console.error("ERRO:", erro);
-
-    }
-
-  };
-
   useEffect(() => {
+
+    const carregarDisciplinas = async () => {
+
+      try {
+
+        const resposta = await fetch(API_URL);
+
+        const dados = await resposta.json();
+
+        setDisciplinas(dados);
+
+      } catch (erro) {
+
+        console.error("Erro ao carregar disciplinas:", erro);
+
+      }
+
+    };
 
     carregarDisciplinas();
 
@@ -59,28 +54,6 @@ function App() {
     setMensagem(
       `Monitoria de ${disciplina.nome} agendada com sucesso com ${disciplina.monitor}!`
     );
-
-  };
-
-  const excluirDisciplina = async (id) => {
-
-    try {
-
-      const resposta = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE"
-      });
-
-      console.log("DELETE:", resposta.status);
-
-      setMensagem("Disciplina removida com sucesso!");
-
-      carregarDisciplinas();
-
-    } catch (erro) {
-
-      console.error("ERRO DELETE:", erro);
-
-    }
 
   };
 
@@ -123,7 +96,7 @@ function App() {
                 marginBottom: "10px"
               }}
             >
-              MonitoraUFERSA v2
+              MonitoraUFERSA
             </h1>
 
             <p
@@ -181,16 +154,11 @@ function App() {
           Monitorias disponíveis
         </h2>
 
-        <p style={{ color: "#94a3b8" }}>
-          Total de disciplinas: {disciplinas.length}
-        </p>
-
         <div
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "25px",
-            marginTop: "20px"
+            gap: "25px"
           }}
         >
 
@@ -239,23 +207,6 @@ function App() {
                 }}
               >
                 Agendar Monitoria
-              </button>
-
-              <button
-                onClick={() => excluirDisciplina(disciplina.id)}
-                style={{
-                  width: "100%",
-                  backgroundColor: "#dc2626",
-                  border: "none",
-                  padding: "12px",
-                  borderRadius: "10px",
-                  color: "white",
-                  fontWeight: "bold",
-                  cursor: "pointer",
-                  marginTop: "10px"
-                }}
-              >
-                Excluir
               </button>
 
             </div>
