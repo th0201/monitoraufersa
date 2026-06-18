@@ -4,6 +4,9 @@ function App() {
 
   const [mensagem, setMensagem] = useState("");
   const [disciplinas, setDisciplinas] = useState([]);
+  const [agendadas, setAgendadas] = useState([]);
+  const [mostrarAgendadas, setMostrarAgendadas] = useState(false);
+
   const [logado, setLogado] = useState(false);
 
   const [nome, setNome] = useState("");
@@ -66,9 +69,11 @@ function App() {
   }, [logado]);
 
   // =========================
-  // AGENDAR
+  // AGENDAR (AGORA SALVA NA LISTA)
   // =========================
   const agendar = (disciplina) => {
+    setAgendadas([...agendadas, disciplina]);
+
     setMensagem(
       `Monitoria de ${disciplina.nome} agendada com ${disciplina.monitor}`
     );
@@ -129,40 +134,30 @@ function App() {
   };
 
   // =========================
-  // TELA DE LOGIN
+  // LOGIN SCREEN
   // =========================
   if (!logado) {
 
     return (
-      <div
-        style={{
-          height: "100vh",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          background: "linear-gradient(to bottom, #020617, #0f172a)",
-          color: "white"
-        }}
-      >
+      <div style={{
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+        background: "linear-gradient(to bottom, #020617, #0f172a)",
+        color: "white"
+      }}>
 
-        <h1
-          style={{
-            fontSize: "64px",
-            fontWeight: "800",
-            background: "linear-gradient(90deg, #34d399, #10b981)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            textShadow: "0px 4px 20px rgba(16,185,129,0.4)",
-            letterSpacing: "2px"
-          }}
-        >
+        <h1 style={{
+          fontSize: "64px",
+          fontWeight: "800",
+          background: "linear-gradient(90deg, #34d399, #10b981)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent"
+        }}>
           MonitoraUFERSA
         </h1>
-
-        <p style={{ color: "#cbd5e1", marginBottom: "20px" }}>
-          Sistema de monitorias da UFERSA
-        </p>
 
         <button
           onClick={login}
@@ -184,46 +179,74 @@ function App() {
   }
 
   // =========================
-  // SISTEMA PRINCIPAL
+  // MAIN
   // =========================
   return (
 
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "linear-gradient(to bottom, #020617, #0f172a)",
-        color: "white",
-        fontFamily: "Arial",
-        padding: "30px"
-      }}
-    >
+    <div style={{
+      minHeight: "100vh",
+      background: "linear-gradient(to bottom, #020617, #0f172a)",
+      color: "white",
+      padding: "30px"
+    }}>
 
-      <div style={{ maxWidth: "1100px", margin: "0 auto" }}>
+      <div style={{ maxWidth: "1100px", margin: "auto" }}>
 
         {/* HEADER */}
-        <h1
-          style={{
-            fontSize: "48px",
-            fontWeight: "800",
-            background: "linear-gradient(90deg, #34d399, #10b981)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
-            textShadow: "0px 3px 15px rgba(16,185,129,0.35)"
-          }}
-        >
+        <h1 style={{
+          fontSize: "48px",
+          fontWeight: "800",
+          background: "linear-gradient(90deg, #34d399, #10b981)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent"
+        }}>
           MonitoraUFERSA
         </h1>
 
-        {/* FORM ADICIONAR */}
-        <div
+        {/* BOTÃO AGENDADAS */}
+        <button
+          onClick={() => setMostrarAgendadas(!mostrarAgendadas)}
           style={{
-            backgroundColor: "#111827",
-            padding: "20px",
-            borderRadius: "15px",
-            marginTop: "20px",
-            marginBottom: "30px"
+            marginTop: "15px",
+            marginBottom: "20px",
+            backgroundColor: "#6366f1",
+            border: "none",
+            padding: "10px",
+            borderRadius: "8px",
+            color: "white",
+            cursor: "pointer"
           }}
         >
+          {mostrarAgendadas ? "Voltar" : "Ver Monitorias Agendadas"}
+        </button>
+
+        {/* LISTA AGENDADAS */}
+        {mostrarAgendadas && (
+          <div style={{
+            backgroundColor: "rgba(0,0,0,0.3)",
+            padding: "20px",
+            borderRadius: "12px",
+            marginBottom: "20px"
+          }}>
+            <h3>Monitorias Agendadas</h3>
+
+            {agendadas.length === 0 ? (
+              <p>Nenhuma monitoria agendada</p>
+            ) : (
+              agendadas.map((a, i) => (
+                <p key={i}>📚 {a.nome} - {a.monitor}</p>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* FORM */}
+        <div style={{
+          backgroundColor: "#111827",
+          padding: "20px",
+          borderRadius: "15px",
+          marginBottom: "30px"
+        }}>
 
           <h3 style={{ color: "#34d399" }}>Nova Disciplina</h3>
 
@@ -260,37 +283,29 @@ function App() {
 
         {/* MENSAGEM */}
         {mensagem && (
-          <div
-            style={{
-              backgroundColor: "#064e3b",
-              padding: "10px",
-              borderRadius: "8px",
-              marginBottom: "20px"
-            }}
-          >
+          <div style={{
+            backgroundColor: "#064e3b",
+            padding: "10px",
+            borderRadius: "8px",
+            marginBottom: "20px"
+          }}>
             {mensagem}
           </div>
         )}
 
-        {/* LISTA */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "20px"
-          }}
-        >
+        {/* LISTA DISCIPLINAS */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "20px"
+        }}>
 
           {disciplinas.map((d) => (
-
-            <div
-              key={d.id}
-              style={{
-                backgroundColor: "#111827",
-                padding: "20px",
-                borderRadius: "12px"
-              }}
-            >
+            <div key={d.id} style={{
+              backgroundColor: "#111827",
+              padding: "20px",
+              borderRadius: "12px"
+            }}>
 
               <h3 style={{ color: "#34d399" }}>{d.nome}</h3>
               <p>Monitor: {d.monitor}</p>
@@ -326,13 +341,11 @@ function App() {
               </button>
 
             </div>
-
           ))}
 
         </div>
 
       </div>
-
     </div>
   );
 }
